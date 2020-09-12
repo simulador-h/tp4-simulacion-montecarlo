@@ -10,17 +10,14 @@
         />
 
         <q-toolbar-title>
-          Simulador H - TP3
+          Simulador H - TP4
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
 
     <q-drawer
       v-model="drawerVisible"
-      :mini="!drawerVisible || drawerMinimized"
-      behavior="desktop" mini-to-overlay bordered
-      @mouseenter="drawerMinimized = false"
-      @mouseleave="drawerMinimized = true"
+      behavior="desktop" mini bordered
     >
       <q-scroll-area class="fit">
         <q-list padding>
@@ -51,6 +48,10 @@
         name: 'Home',
         icon: 'home',
         path: '/',
+      }, {
+        name: 'Simulación Montecarlo №4',
+        icon: 'run_circle',
+        path: '/montecarlo-s-4',
       }],
     });
 

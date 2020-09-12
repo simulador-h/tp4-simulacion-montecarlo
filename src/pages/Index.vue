@@ -1,13 +1,12 @@
 <template>
   <q-page class="column items-center justify-evenly">
     <h1>GRUPO - H</h1>
-    <h3>Generación de Variables Aleatorias</h3>
+    <h3>Simulación de Montecarlo</h3>
 
     <div class="row q-gutter-md justify-center">
       <q-btn push color="white" text-color="primary" label="Lucas Astrada" />
       <q-btn push color="white" text-color="primary" label="Tatiana Candusso" />
       <q-btn push color="white" text-color="primary" label="Rodrigo Gonzalez" />
-      <q-btn push color="white" text-color="primary" label="Gabriel Palacio" />
     </div>
   </q-page>
 </template>

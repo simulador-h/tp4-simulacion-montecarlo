@@ -45,11 +45,17 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
 
     // Best Practices
+    'no-else-return': ['error', {
+      'allowElseIf': true,
+    }],
     'no-param-reassign': ['error', {
       'props': false,
     }],
 
     // Stylistic Issues
+    'brace-style': ['error', 'stroustrup', {
+      allowSingleLine: true,
+    }],
     'max-len': ['error', {
       'code': 120,
       'comments': 135,
@@ -95,7 +101,7 @@ module.exports = {
       files: ['*.ts', '*.vue'],
       extends: [
         'plugin:@typescript-eslint/recommended',
-        'plugin:@typescript-eslint/recommended-requiring-type-checking',
+        // 'plugin:@typescript-eslint/recommended-requiring-type-checking',
       ],
       rules: {
         '@typescript-eslint/explicit-module-boundary-types': 'off',
