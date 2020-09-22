@@ -5,12 +5,13 @@
       @reset="onReset"
     >
       <div class="row q-col-gutter-md">
-        <div class="col-6">
-          <q-card flat bordered>
-            <q-card-section>
-              <div class="text-uppercase text-caption text-primary">
+        <div class="col-12 col-sm-6">
+          <q-card flat bordered class="full-height">
+            <q-card-section class="row items-center justify-between">
+              <span class="text-uppercase text-caption text-primary">
                 Política de compras
-              </div>
+              </span>
+              <q-icon name="shopping_bag" class="text-primary" />
             </q-card-section>
 
             <q-separator inset />
@@ -24,11 +25,7 @@
                 outlined
                 lazy-rules
                 :rules="[ val => (val && val > 0) || 'Requerido | Mayor a 0' ]"
-              >
-                <template #prepend>
-                  <q-icon name="shopping_bag" />
-                </template>
-              </q-input>
+              />
 
               <q-input
                 v-model.number="pCompra.tamañoFrascos"
@@ -38,11 +35,7 @@
                 outlined
                 lazy-rules
                 :rules="[ val => (val && val > 0) || 'Requerido | Mayor a 0' ]"
-              >
-                <template #prepend>
-                  <q-icon name="shopping_bag" />
-                </template>
-              </q-input>
+              />
 
               <q-input
                 v-model.number="pCompra.intervaloCompra"
@@ -52,24 +45,18 @@
                 outlined
                 lazy-rules
                 :rules="[ val => (val && val > 0) || 'Requerido | Mayor a 0' ]"
-              >
-                <template #prepend>
-                  <q-icon name="shopping_bag" />
-                </template>
-              </q-input>
+              />
             </q-card-section>
           </q-card>
         </div>
 
-        <div class="col-6">
-          <q-card
-            class="col-6"
-            flat bordered
-          >
-            <q-card-section>
-              <div class="text-uppercase text-caption text-primary">
+        <div class="col-12 col-sm-6">
+          <q-card flat bordered class="full-height">
+            <q-card-section class="row items-center justify-between">
+              <span class="text-uppercase text-caption text-primary">
                 Política de costos
-              </div>
+              </span>
+              <q-icon name="money_off" class="text-primary" />
             </q-card-section>
 
             <q-separator inset />
@@ -84,11 +71,7 @@
                 outlined
                 lazy-rules
                 :rules="[ val => (val && val > 0) || 'Requerido | Mayor a 0' ]"
-              >
-                <template #prepend>
-                  <q-icon name="money_off" />
-                </template>
-              </q-input>
+              />
 
               <q-input
                 v-model.number="pCosto.costoOportunidad"
@@ -99,24 +82,18 @@
                 outlined
                 lazy-rules
                 :rules="[ val => (val && val > 0) || 'Requerido | Mayor a 0' ]"
-              >
-                <template #prepend>
-                  <q-icon name="money_off" />
-                </template>
-              </q-input>
+              />
             </q-card-section>
           </q-card>
         </div>
 
-        <div class="col-6">
-          <q-card
-            class="col-6"
-            flat bordered
-          >
-            <q-card-section>
-              <div class="text-uppercase text-caption text-primary">
+        <div class="col-12 col-sm-6">
+          <q-card flat bordered class="full-height">
+            <q-card-section class="row items-center justify-between">
+              <span class="text-uppercase text-caption text-primary">
                 Política de ventas
-              </div>
+              </span>
+              <q-icon name="local_cafe" class="text-primary" />
             </q-card-section>
 
             <q-separator inset />
@@ -131,24 +108,18 @@
                 outlined
                 lazy-rules
                 :rules="[ val => (val && val > 0) || 'Requerido | Mayor a 0' ]"
-              >
-                <template #prepend>
-                  <q-icon name="local_cafe" />
-                </template>
-              </q-input>
+              />
             </q-card-section>
           </q-card>
         </div>
 
-        <div class="col-6">
-          <q-card
-            class="col-6"
-            flat bordered
-          >
-            <q-card-section>
-              <div class="text-uppercase text-caption text-primary">
+        <div class="col-12 col-sm-6">
+          <q-card flat bordered class="full-height">
+            <q-card-section class="row items-center justify-between">
+              <span class="text-uppercase text-caption text-primary">
                 Política de stock
-              </div>
+              </span>
+              <q-icon name="storage" class="text-primary" />
             </q-card-section>
 
             <q-separator inset />
@@ -162,11 +133,7 @@
                 outlined
                 lazy-rules
                 :rules="[ val => (val && val > 0) || 'Requerido | Mayor a 0' ]"
-              >
-                <template #prepend>
-                  <q-icon name="storage" />
-                </template>
-              </q-input>
+              />
             </q-card-section>
           </q-card>
         </div>
@@ -179,6 +146,12 @@
     </q-form>
   </q-page>
 </template>
+
+<style lang="scss" scoped>
+  .q-card .q-card__section .q-icon {
+    font-size: 1.25rem;
+  }
+</style>
 
 <script lang="ts">
   import {
