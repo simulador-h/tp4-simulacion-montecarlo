@@ -80,13 +80,56 @@
       flat dense bordered
       row-key="día"
       :columns="columnas"
+      :visible-columns="columnasVisibles"
       :data="vectores"
       :loading="loading"
       :pagination="{
         sortBy: 'día',
         rowsPerPage: 50,
       }"
-    />
+    >
+      <template #top="props">
+        <div class="q-table__title">
+          Cibercafé
+        </div>
+        <q-space />
+        <q-select
+          v-model="columnasVisibles"
+          class="col-2"
+          label="Columnas"
+          :options="columnas"
+          :option-disable="({ required }) => required"
+          :display-value="columnasVisibles.length"
+          option-value="name"
+          borderless
+          multiple
+          dense
+          options-dense
+          emit-value
+          map-options
+        >
+          <template #prepend>
+            <q-icon name="view_week" />
+          </template>
+        </q-select>
+        <q-btn
+          class="q-ml-md"
+          flat round dense
+          :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+          @click="props.toggleFullscreen"
+        />
+      </template>
+
+      <template #loading>
+        <q-inner-loading showing color="primary" />
+      </template>
+
+      <template #no-data>
+        <div class="row flex-center full-width" style="height: 3rem">
+          <q-icon size="2em" name="pest_control_rodent" />
+        </div>
+      </template>
+    </q-table>
   </q-page>
 </template>
 
@@ -95,7 +138,7 @@
     font-size: 1.25rem;
   }
 
-  .q-table {
+  /deep/ .q-table {
     thead tr:first-child th:first-child {
       color: white;
       background-color: $primary;
@@ -167,6 +210,10 @@
     }
     estadístico: {
       stock: {
+        descartadoPromedio: {
+          gramos: number
+          frascos: number
+        }
         finalPromedio: {
           gramos: number
           frascos: number
@@ -200,6 +247,7 @@
       }
       costo: {
         compraPromedio: number
+        oportunidadPromedio: number,
       }
       balance: {
         contribuciónPromedio: number
@@ -262,97 +310,85 @@
           name: 'stock-disponible-g',
           label: 'Stock Disponible (g)',
           field: (row: VectorEstado) => row.stock.disponible.gramos,
-          align: 'left',
+          align: 'right',
           format: nn,
-          required: true,
         },
         {
           name: 'stock-disponible-fr',
           label: 'Stock Disponible (fr)',
           field: (row: VectorEstado) => row.stock.disponible.frascos,
           format: np,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'stock-remanente-g',
           label: 'Stock Remanente (g)',
           field: (row: VectorEstado) => row.stock.remanente.gramos,
           format: nn,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'stock-remanente-fr',
           label: 'Stock Remanente (fr)',
           field: (row: VectorEstado) => row.stock.remanente.frascos,
           format: np,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'stock-descartado-g',
           label: 'Stock Descartado (g)',
           field: (row: VectorEstado) => row.stock.descartado.gramos,
           format: nn,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'stock-descartado-fr',
           label: 'Stock Descartado (fr)',
           field: (row: VectorEstado) => row.stock.descartado.frascos,
           format: np,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'stock-final-g',
           label: 'Stock Final (g)',
           field: (row: VectorEstado) => row.stock.final.gramos,
           format: nn,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'stock-final-fr',
           label: 'Stock Final (fr)',
           field: (row: VectorEstado) => row.stock.final.frascos,
           format: np,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'demanda-mañana',
           label: 'Demanda Mañana (g)',
           field: (row: VectorEstado) => row.demanda.mañana,
           format: nn,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'demanda-tarde',
           label: 'Demanda Tarde (g)',
           field: (row: VectorEstado) => row.demanda.tarde,
           format: nn,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'demanda-satisfecha',
           label: 'Demanda Satisfecha (g)',
           field: (row: VectorEstado) => row.demanda.satisfecha,
           format: nn,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'demanda-insatisfecha',
           label: 'Demanda Insatisfecha (g)',
           field: (row: VectorEstado) => row.demanda.insatisfecha,
           format: nn,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'pedido-demora',
@@ -361,64 +397,70 @@
           format: (v) => (
             (typeof v === 'number') ? v : '-'
           ),
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'pedido-llegada',
           label: 'Llegada Pedido',
           field: (row: VectorEstado) => row.pedido.llegada,
           format: (v: number) => `Día ${v}`,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'ganancia-venta',
           label: 'Ganancia Venta',
           field: (row: VectorEstado) => row.ganancia.venta,
           format: $,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'costo-compra',
           label: 'Costo Compra',
           field: (row: VectorEstado) => row.costo.compra,
           format: $,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'costo-oportunidad',
           label: 'Costo Oportunidad',
           field: (row: VectorEstado) => row.costo.oportunidad,
           format: $,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'balance-contribución',
           label: 'Márgen Contribución',
           field: (row: VectorEstado) => row.balance.contribución,
           format: $,
-          align: 'left',
-          required: true,
+          align: 'right',
+        },
+        {
+          name: 'estadístico-stock-descartado-promedio-g',
+          label: 'Stock Descartado Promedio (g)',
+          field: (row: VectorEstado) => row.estadístico.stock.descartadoPromedio.gramos,
+          format: nn,
+          align: 'right',
+        },
+        {
+          name: 'estadístico-stock-descartado-promedio-fr',
+          label: 'Stock Descartado Promedio (fr)',
+          field: (row: VectorEstado) => row.estadístico.stock.descartadoPromedio.frascos,
+          format: n3,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-promedio-g',
           label: 'Stock Final Promedio (g)',
           field: (row: VectorEstado) => row.estadístico.stock.finalPromedio.gramos,
           format: nn,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-promedio-fr',
           label: 'Stock Final Promedio (fr)',
           field: (row: VectorEstado) => row.estadístico.stock.finalPromedio.frascos,
           format: n3,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-frecuencia-2',
@@ -428,8 +470,7 @@
             .reduce((sum, [k, v]) => (
               Number(k) <= 2 ? sum + v : sum
             ), 0),
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-porcentaje-2',
@@ -440,8 +481,7 @@
               Number(k) <= 2 ? sum + v : sum
             ), 0),
           format: percent,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-frecuencia-2-5',
@@ -451,8 +491,7 @@
             .reduce((sum, [k, v]) => (
               Number(k) > 2 && Number(k) <= 5 ? sum + v : sum
             ), 0),
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-porcentaje-2-5',
@@ -463,8 +502,7 @@
               Number(k) > 2 && Number(k) <= 5 ? sum + v : sum
             ), 0),
           format: percent,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-frecuencia-5-8',
@@ -474,8 +512,7 @@
             .reduce((sum, [k, v]) => (
               Number(k) > 5 && Number(k) <= 8 ? sum + v : sum
             ), 0),
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-porcentaje-5-8',
@@ -486,8 +523,7 @@
               Number(k) > 5 && Number(k) <= 8 ? sum + v : sum
             ), 0),
           format: percent,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-frecuencia-8',
@@ -497,8 +533,7 @@
             .reduce((sum, [k, v]) => (
               Number(k) > 8 ? sum + v : sum
             ), 0),
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-porcentaje-8',
@@ -509,64 +544,75 @@
               Number(k) > 8 ? sum + v : sum
             ), 0),
           format: percent,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-stock-final-porcentaje-stock-0',
           label: 'Stock Final Positivo (%)',
           field: (row: VectorEstado) => 1 - (row.estadístico.stock.finalPorcentajes.gramos[0] || 0),
           format: percent,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-demanda-insatisfecha-promedio',
           label: 'Demanda Insatisfecha Promedio (g)',
           field: (row: VectorEstado) => row.estadístico.demanda.insatisfechaPromedio,
           format: nn,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-demanda-insatisfecha-acumulada',
           label: 'Demanda Insatisfecha (días)',
           field: (row: VectorEstado) => row.estadístico.demanda.insatisfechaAcumulada.días,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-demanda-insatisfecha-porcentaje',
           label: 'Demanda Insatisfecha (%)(días)',
           field: (row: VectorEstado) => row.estadístico.demanda.insatisfechaPorcentaje,
           format: percent,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-ganancia-venta-promedio',
           label: 'Ganancia Venta Promedio',
           field: (row: VectorEstado) => row.estadístico.ganancia.ventaPromedio,
           format: $,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
         {
           name: 'estadístico-costo-compra-promedio',
           label: 'Costo Compra Promedio',
           field: (row: VectorEstado) => row.estadístico.costo.compraPromedio,
           format: $,
-          align: 'left',
-          required: true,
+          align: 'right',
+        },
+        {
+          name: 'estadístico-costo-oportunidad-promedio',
+          label: 'Costo Oportunidad Promedio',
+          field: (row: VectorEstado) => row.estadístico.costo.oportunidadPromedio,
+          format: $,
+          align: 'right',
         },
         {
           name: 'estadístico-balance-contribución-promedio',
           label: 'Márgen Contribución Promedio',
           field: (row: VectorEstado) => row.estadístico.balance.contribuciónPromedio,
           format: $,
-          align: 'left',
-          required: true,
+          align: 'right',
         },
+      ],
+      columnasVisibles: [
+        'día',
+        'stock-disponible-g', 'stock-remanente-g', 'stock-descartado-g', 'stock-final-g',
+        'demanda-mañana', 'demanda-tarde', 'demanda-satisfecha', 'demanda-insatisfecha',
+        'pedido-demora', 'pedido-llegada',
+        'ganancia-venta', 'costo-compra', 'costo-oportunidad', 'balance-contribución',
+        'estadístico-stock-descartado-promedio-g', 'estadístico-stock-final-promedio-g',
+        'estadístico-demanda-insatisfecha-promedio', 'estadístico-demanda-insatisfecha-porcentaje',
+        'estadístico-ganancia-venta-promedio',
+        'estadístico-costo-compra-promedio', 'estadístico-costo-oportunidad-promedio',
+        'estadístico-balance-contribución-promedio',
       ],
 
       vectores: <VectorEstado[]>[],
@@ -667,6 +713,10 @@
           },
           estadístico: {
             stock: {
+              descartadoPromedio: {
+                gramos: 0,
+                frascos: 0,
+              },
               finalPromedio: {
                 gramos: 0,
                 frascos: 0,
@@ -692,6 +742,7 @@
             },
             costo: {
               compraPromedio: 0,
+              oportunidadPromedio: 0,
             },
             balance: {
               contribuciónPromedio: 0,
@@ -729,6 +780,7 @@
             },
             estadístico: {
               stock: {
+                descartadoPromedio: { gramos: 0, frascos: 0 },
                 finalPromedio: { gramos: 0, frascos: 0 },
                 finalFrecuencia: { gramos: {}, frascos: {} },
                 finalPorcentajes: { gramos: {}, frascos: {} },
@@ -743,6 +795,7 @@
               },
               costo: {
                 compraPromedio: 0,
+                oportunidadPromedio: 0,
               },
               balance: {
                 contribuciónPromedio: 0,
@@ -789,10 +842,19 @@
 
           dN.balance.contribución = dN.ganancia.venta - dN.costo.compra;
 
+          dN.estadístico.stock.descartadoPromedio.gramos = (
+            (dI.estadístico.stock.descartadoPromedio.gramos * dI.día) + dN.stock.descartado.gramos
+          ) / n;
+          dN.estadístico.stock.descartadoPromedio.frascos = (
+            dN.estadístico.stock.descartadoPromedio.gramos
+          ) / tamañoFrascos;
+
           dN.estadístico.stock.finalPromedio.gramos = (
             (dI.estadístico.stock.finalPromedio.gramos * dI.día) + dN.stock.final.gramos
           ) / n;
-          dN.estadístico.stock.finalPromedio.frascos = dN.estadístico.stock.finalPromedio.gramos / tamañoFrascos;
+          dN.estadístico.stock.finalPromedio.frascos = (
+            dN.estadístico.stock.finalPromedio.gramos
+          ) / tamañoFrascos;
 
           const stockCero = dN.stock.final.gramos === 0;
           dN.estadístico.stock.finalFrecuencia.gramos[0] = dI.estadístico.stock.finalFrecuencia.gramos[0] || 0;
@@ -829,6 +891,10 @@
 
           dN.estadístico.costo.compraPromedio = (
             (dI.estadístico.costo.compraPromedio * dI.día) + dN.costo.compra
+          ) / n;
+
+          dN.estadístico.costo.oportunidadPromedio = (
+            (dI.estadístico.costo.oportunidadPromedio * dI.día) + dN.costo.oportunidad
           ) / n;
 
           dN.estadístico.balance.contribuciónPromedio = (
